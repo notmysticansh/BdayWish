@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBD to my OG Fraand</title>
+    
+    <!-- Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&display=swap" rel="stylesheet">
+
+    <!-- CDN Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #c084fc;
+            --secondary: #2dd4bf;
+            --accent: #ffedd5;
+        }
+
+        body {
+            margin: 0;
+            background-color: #0c0a09;
+            color: #f5f5f5;
+            font-family: 'Satoshi', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animated Aurora Background */
+        .aurora {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            filter: blur(80px);
+            opacity: 0.4;
+        }
+        .blob {
+            position: absolute; width: 80vw; height: 80vw; border-radius: 50%;
+            mix-blend-mode: screen; animation: float 20s infinite alternate ease-in-out;
+        }
+        .b1 { background: hsla(270, 70%, 60%, 0.3); top: -10%; left: -10%; }
+        .b2 { background: hsla(180, 80%, 50%, 0.2); bottom: -10%; right: -10%; }
+
+        @keyframes float { 
+            from { transform: translate(0,0) scale(1); } 
+            to { transform: translate(15%, 12%) scale(1.1); } 
+        }
+
+        .serif-title {
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, #ffffff, var(--primary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .cursive { font-family: 'Dancing Script', cursive; color: var(--accent); }
+
+        /* Card Container */
+        .glass-card {
+            background: rgba(20, 18, 25, 0.85);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            width: 90%; max-width: 500px;
+            padding: 3rem;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+            z-index: 10;
+            position: relative;
+            min-height: 420px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-main {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 14px 35px; border-radius: 50px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+            font-size: 0.75rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(192, 132, 252, 0.3);
+        }
+        .btn-main:hover { transform: scale(1.05) translateY(-3px); box-shadow: 0 15px 35px rgba(45, 212, 191, 0.5); }
+
+        .polaroid {
+            background: white; padding: 12px 12px 40px 12px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            transform: rotate(-2deg); margin-bottom: 25px;
+            position: relative;
+        }
+        .polaroid img { width: 100%; height: 260px; object-fit: cover; border-radius: 2px; }
+        .polaroid-text { color: #333; font-family: 'Dancing Script', cursive; font-size: 1.5rem; text-align: center; margin-top: 15px; }
+
+        .step { display: none; flex-direction: column; align-items: center; text-align: center; width: 100%; }
+        .step.active { display: flex; }
+
+        .nav-dots { position: fixed; bottom: 40px; display: flex; gap: 10px; z-index: 100; }
+        .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.2); border-radius: 50%; transition: 0.4s; }
+        .dot.active { background: var(--secondary); width: 30px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="aurora"><div class="blob b1"></div><div class="blob b2"></div></div>
+    <canvas id="canvas3d" style="position:fixed; top:0; left:0; z-index:-1;"></canvas>
+
+    <div class="nav-dots" id="dots"></div>
+
+    <main class="glass-card">
+        
+        <!-- Step 1: Intro -->
+        <div id="step-1" class="step active">
+            <span class="text-6xl mb-6">🧸</span>
+            <h1 class="serif-title text-4xl mb-4">Hey Fraand,</h1>
+            <p class="text-white/60 mb-10 italic">Decided to celebrate your day with a little digital time capsule. Ready?</p>
+            <button onclick="nextStep(2)" class="btn-main">Don't click this</button>
+        </div>
+
+        <!-- Step 2: Birthday Wish -->
+        <div id="step-2" class="step">
+            <h1 class="serif-title text-5xl mb-4">HBD! 🎂</h1>
+            <p class="text-white/70 text-lg mb-8 leading-relaxed">To my favorite fraand since the 8th-grade hallways. May you finally get some common sense this year.</p>
+            <button onclick="nextStep(3)" class="btn-main">Look at this...</button>
+        </div>
+
+        <!-- Step 3: Childhood Photo (Alien Signals) -->
+        <div id="step-3" class="step">
+            <div class="polaroid" id="p1">
+                <img src="childhood.jpg" onerror="this.src='https://i.ibb.co/6Z6XgCg/crush.webp'" alt="Childhood Photo">
+                <p class="polaroid-text">Alien Signals? 🛸</p>
+            </div>
+            <p class="text-white/60 mb-8 italic">What was the plan here? Were you trying to catch signals from space? 😂</p>
+            <button onclick="nextStep(4)" class="btn-main">8th Grade Flashback</button>
+        </div>
+
+        <!-- Step 4: 8th Grade Dance -->
+        <div id="step-4" class="step">
+            <div class="text-6xl mb-6">💃🕺</div>
+            <h1 class="serif-title text-3xl mb-4">The Stage Partners</h1>
+            <p class="text-white/70 mb-8 leading-relaxed">
+                8th grade Independence Day. That performance was basically the pilot episode of this fraandship. 🇮🇳
+            </p>
+            <button onclick="nextStep(5)" class="btn-main">The Farewell Plot</button>
+        </div>
+
+        <!-- Step 5: Farewell Buffet -->
+        <div id="step-5" class="step">
+            <div class="polaroid" id="p2">
+                <img src="grownup.jpg" onerror="this.src='https://i.ibb.co/6Z6XgCg/crush.webp'" alt="Farewell Photo">
+                <p class="polaroid-text">Priority: Food 🍕</p>
+            </div>
+            <p class="text-white/70 mb-8 font-bold">
+                10th grade farewell—Everyone else was roaming around, but you? You were absolutely locked in the buffet line. Respect! 😂
+            </p>
+            <button onclick="nextStep(6)" class="btn-main">Fraandship Stats</button>
+        </div>
+
+        <!-- Step 6: Bento Stats (Forgot Feature Added) -->
+        <div id="step-6" class="step">
+            <h1 class="serif-title text-3xl mb-8">Fraandship Stats</h1>
+            <div class="grid grid-cols-2 gap-4 mb-8 w-full">
+                <div class="bg-white/5 p-5 rounded-3xl border border-white/10 text-left">
+                    <h4 class="text-teal-400 font-bold text-xs uppercase mb-2">Memory Wipe 🧠</h4>
+                    <p class="text-white/50 text-[10px]">For our shared talent of forgetting things every 5 minutes. Every convo is a surprise!</p>
+                </div>
+                <div class="bg-white/5 p-5 rounded-3xl border border-white/10 text-left">
+                    <h4 class="text-purple-400 font-bold text-xs uppercase mb-2">Radar 🍕</h4>
+                    <p class="text-white/50 text-[10px]">Your ability to find the best plate at any event is still unmatched.</p>
+                </div>
+                <div class="bg-white/10 p-5 rounded-3xl border border-white/10 col-span-2 text-center">
+                    <h4 class="text-orange-400 font-bold text-xs uppercase mb-2 italic">Constant Sync</h4>
+                    <p class="text-white/50 text-[10px]">The one person I speak 'fluent nonsense' with since 8th grade.</p>
+                </div>
+            </div>
+            <button onclick="nextStep(7)" class="btn-main">A Sincere Note</button>
+        </div>
+
+        <!-- Step 7: Subtle Note (The Battery Metaphor) -->
+        <div id="step-7" class="step">
+            <h1 class="cursive text-4xl mb-6">Since 8th Grade...</h1>
+            <p class="text-white/80 text-lg mb-10 italic leading-relaxed">
+                It’s weird how some connections just... unlock a version of you that was previously on mute. 
+                I’m glad our 8th-grade intro turned into a never-ending podcast where the clocks always seem to lose their batteries. 
+                Thanks for being the same real fraand since day one.
+            </p>
+            <button onclick="nextStep(8)" class="btn-main">The Final Blast!</button>
+        </div>
+
+        <!-- Step 8: Finale -->
+        <div id="step-8" class="step">
+            <div class="text-7xl mb-8">🧸🎉</div>
+            <h1 class="serif-title text-4xl mb-4">Keep Glowing!</h1>
+            <h2 class="cursive text-3xl mb-10">Happy Birthday to a Real One!</h2>
+            <button onclick="celebrate()" id="final-btn" class="btn-main">Celebrate 🚀</button>
+        </div>
+
+    </main>
+
+    <script>
+        let currentStep = 1;
+        const maxSteps = 8;
+
+        // Progress navigation dots
+        const dotContainer = document.getElementById('dots');
+        for(let i=1; i<=maxSteps; i++) {
+            const d = document.createElement('div');
+            d.className = `dot ${i===1 ? 'active' : ''}`;
+            d.id = `dot-${i}`;
+            dotContainer.appendChild(d);
+        }
+
+        function nextStep(step) {
+            const current = document.getElementById(`step-${currentStep}`);
+            const next = document.getElementById(`step-${step}`);
+            
+            if(!next) return;
+
+            // Sync dots UI
+            document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+            const activeDot = document.getElementById(`dot-${step}`);
+            if(activeDot) activeDot.classList.add('active');
+
+            // Slide & Fade Animation
+            gsap.to(current, { opacity: 0, y: -20, scale: 0.9, duration: 0.5, onComplete: () => {
+                current.classList.remove('active');
+                next.classList.add('active');
+                currentStep = step;
+
+                // Photo specialized animations
+                if(step === 3 || step === 5) {
+                    gsap.from(`#p${step===3?1:2}`, { rotate: -15, scale: 0.5, duration: 1, ease: "elastic.out(1, 0.5)" });
+                }
+
+                gsap.fromTo(next, 
+                    { opacity: 0, y: 20, scale: 0.9 },
+                    { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.7)" }
+                );
+            }});
+        }
+
+        function celebrate() {
+            const duration = 15 * 1000;
+            const animationEnd = Date.now() + duration;
+
+            (function frame() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return;
+
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 70,
+                    origin: { x: 0 },
+                    colors: ['#c084fc', '#2dd4bf', '#ffedd5']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 70,
+                    origin: { x: 1 },
+                    colors: ['#c084fc', '#2dd4bf', '#ffedd5']
+                });
+
+                requestAnimationFrame(frame);
+            }());
+
+            gsap.to("#final-btn", { scale: 0, opacity: 0, duration: 0.5 });
+        }
+
+        // --- Three.js Background (Aesthetic Spheres) ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas3d'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const bearGroup = new THREE.Group();
+        scene.add(bearGroup);
+
+        const bearGeo = new THREE.SphereGeometry(0.5, 12, 12);
+        const bearMat = new THREE.MeshPhongMaterial({ color: 0xc084fc, transparent: true, opacity: 0.4 });
+
+        for(let i=0; i<30; i++) {
+            const b = new THREE.Mesh(bearGeo, bearMat);
+            b.position.set((Math.random()-0.5)*100, (Math.random()-0.5)*100, (Math.random()-0.5)*50);
+            bearGroup.add(b);
+        }
+
+        scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+        const pl = new THREE.PointLight(0x2dd4bf, 30);
+        pl.position.set(0, 10, 20);
+        scene.add(pl);
+
+        camera.position.z = 40;
+
+        function renderLoop() {
+            requestAnimationFrame(renderLoop);
+            bearGroup.rotation.y += 0.001;
+            bearGroup.children.forEach(b => {
+                b.position.y += Math.sin(Date.now()*0.001 + b.position.x)*0.02;
+            });
+            renderer.render(scene, camera);
+        }
+        renderLoop();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
